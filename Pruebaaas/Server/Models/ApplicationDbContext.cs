@@ -5,10 +5,6 @@ namespace Pruebaaas.Server.Models
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext()
-        {
-
-        }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
         {
@@ -20,7 +16,6 @@ namespace Pruebaaas.Server.Models
         public DbSet<ProductoClasificacion> ProductosClasificacion { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<VentaConceptos> Conceptos { get; set; }
-
 
     }
 

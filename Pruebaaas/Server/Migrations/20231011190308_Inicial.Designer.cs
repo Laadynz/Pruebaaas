@@ -12,8 +12,8 @@ using Pruebaaas.Server.Models;
 namespace Pruebaaas.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231011181402_Pruebaaas")]
-    partial class Pruebaaas
+    [Migration("20231011190308_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
