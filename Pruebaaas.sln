@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pruebaaas.Server", "Pruebaaas\Server\Pruebaaas.Server.csproj", "{CA76FF00-D691-4E61-BBE9-9389D8DC54B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pruebaaas.Server", "Pruebaaas\Server\Pruebaaas.Server.csproj", "{CA76FF00-D691-4E61-BBE9-9389D8DC54B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pruebaaas.Client", "Pruebaaas\Client\Pruebaaas.Client.csproj", "{F15A447C-5FB6-447D-B5DC-B95D58EB5FC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pruebaaas.Client", "Pruebaaas\Client\Pruebaaas.Client.csproj", "{F15A447C-5FB6-447D-B5DC-B95D58EB5FC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pruebaaas.Shared", "Pruebaaas\Shared\Pruebaaas.Shared.csproj", "{7DF582C7-C88C-4038-97A3-74FA37391C3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pruebaaas.Shared", "Pruebaaas\Shared\Pruebaaas.Shared.csproj", "{7DF582C7-C88C-4038-97A3-74FA37391C3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
