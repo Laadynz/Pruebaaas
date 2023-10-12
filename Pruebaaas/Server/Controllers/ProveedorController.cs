@@ -31,7 +31,6 @@ namespace Pruebaaas.Server.Controllers
                 Domicilio = proveedor.Domicilio,
                 Email = proveedor.Email,
                 Telefono = proveedor.Telefono,
-                ProductoId = proveedor.ProductoId
             };
         }
 
@@ -76,7 +75,6 @@ namespace Pruebaaas.Server.Controllers
                     Domicilio = proveedorDto.Domicilio,
                     Email = proveedorDto.Email,
                     Telefono = proveedorDto.Telefono,
-                    ProductoId = proveedorDto.ProductoId
                 };
 
                 _context.Proveedores.Add(proveedor);
@@ -108,7 +106,6 @@ namespace Pruebaaas.Server.Controllers
                 proveedor.Domicilio = proveedorDto.Domicilio;
                 proveedor.Email = proveedorDto.Email;
                 proveedor.Telefono = proveedorDto.Telefono;
-                proveedor.ProductoId = proveedorDto.ProductoId;
 
                 _context.Entry(proveedor).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
