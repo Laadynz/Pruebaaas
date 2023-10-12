@@ -1,0 +1,119 @@
+﻿@page "/proveedores"
+@using Pruebaaas.Shared.Models
+@inject HttpClient Http
+
+<h1>Proveedores</h1>
+
+<div class="container mt-5">
+    <h2>Lista de Proveedores</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Clave de Proveedor</th>
+                <th>Nombre</th>
+                <th>Domicilio</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Producto ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (proveedores != null && proveedores.Any())
+            {
+                @foreach (var proveedor in proveedores)
+                {
+                    <tr>
+                        <td>@proveedor.Id</td>
+                        <td>@proveedor.ClaveProveedor</td>
+                        <td>@proveedor.Nombre</td>
+                        <td>@proveedor.Domicilio</td>
+                        <td>@proveedor.Email</td>
+                        <td>@proveedor.Telefono</td>
+                        <td>@proveedor.ProductoId</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7">No hay proveedores.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2>Agregar Proveedor</h2>
+    <form>
+        <div class="form-group">
+            <label for="claveProveedor">Clave de Proveedor:</label>
+            <input type="number" class="form-control" id="claveProveedor" @bind="nuevoProveedor.ClaveProveedor" />
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" @bind="nuevoProveedor.Nombre" />
+        </div>
+        <div class="form-group">
+            <label for="domicilio">Domicilio:</label>
+            <input type="text" class="form-control" id="domicilio" @bind="nuevoProveedor.Domicilio" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" @bind="nuevoProveedor.Email" />
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="text" class="form-control" id="telefono" @bind="nuevoProveedor.Telefono" />
+        </div>
+        <div class="form-group">
+            <label for="productoId">Producto ID:</label>
+            <input type="number" class="form-control" id="productoId" @bind="nuevoProveedor.ProductoId" />
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="AgregarProveedor">Guardar</button>
+    </form>
+</div>
+
+@code {
+    List<ProveedorDto> proveedores = new List<ProveedorDto>();
+    ProveedorAgregarDto nuevoProveedor = new ProveedorAgregarDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarProveedores();
+    }
+
+    private async Task CargarProveedores()
+    {
+        try
+        {
+            proveedores = await Http.GetFromJsonAsync<List<ProveedorDto>>("api/proveedores");
+            StateHasChanged(); // Notificar a Blazor que el estado ha cambiado y debe renderizarse nuevamente
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar proveedores: {ex.Message}");
+        }
+    }
+
+    private async Task AgregarProveedor()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/proveedores", nuevoProveedor);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await CargarProveedores();
+                nuevoProveedor = new ProveedorAgregarDto(); // Limpiar el formulario después de agregar proveedor
+            }
+            else
+            {
+                Console.WriteLine("Error al agregar el proveedor");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el proveedor: {ex.Message}");
+        }
+    }
+}

@@ -1,4 +1,4 @@
-﻿@page "/clientes"
+﻿@page "/productos"
 @using Pruebaaas.Shared.Models
 @inject HttpClient Http
 
@@ -81,7 +81,7 @@
         try
         {
             clientes = await Http.GetFromJsonAsync<List<ClienteDto>>("api/clientes");
-            StateHasChanged(); 
+            StateHasChanged(); // Notificar a Blazor que el estado ha cambiado y debe renderizarse nuevamente
         }
         catch (Exception ex)
         {
