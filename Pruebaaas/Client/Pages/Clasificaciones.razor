@@ -1,0 +1,92 @@
+﻿@page "/clasificaciones"
+@using Pruebaaas.Shared.Models
+@inject HttpClient Http
+
+<h1>Clasificaciones</h1>
+
+<div class="container mt-5">
+    <h2>Lista de Clasificaciones</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (clasificaciones != null && clasificaciones.Any())
+            {
+                @foreach (var clasificacion in clasificaciones)
+                {
+                    <tr>
+                        <td>@clasificacion.Id</td>
+                        <td>@clasificacion.Descripcion</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2">No hay clasificaciones.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2>Agregar Clasificación</h2>
+    <form>
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <input type="text" class="form-control" id="descripcion" @bind="nuevaClasificacion.Descripcion" />
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="CrearClasificacion">Guardar</button>
+    </form>
+</div>
+
+@code {
+    List<ProductoClasificacionDto> clasificaciones = new List<ProductoClasificacionDto>();
+    ProductoClasificacionDto nuevaClasificacion = new ProductoClasificacionDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarClasificaciones();
+    }
+
+    private async Task CargarClasificaciones()
+    {
+        try
+        {
+            clasificaciones = await Http.GetFromJsonAsync<List<ProductoClasificacionDto>>("api/ProductoClasificacion");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar clasificaciones: {ex.Message}");
+        }
+    }
+
+    private async Task CrearClasificacion()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/ProductoClasificacion", nuevaClasificacion);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await CargarClasificaciones();
+                nuevaClasificacion = new ProductoClasificacionDto(); // Limpiar el formulario después de agregar clasificación
+                StateHasChanged(); // Asegurar que la interfaz de usuario se actualice
+            }
+            else
+            {
+                // Manejar errores de la respuesta del servidor
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error del servidor: {errorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar la clasificación: {ex.Message}");
+        }
+    }
+}

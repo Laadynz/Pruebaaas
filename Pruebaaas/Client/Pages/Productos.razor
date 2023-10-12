@@ -1,0 +1,113 @@
+﻿@page "/productos"
+@using Pruebaaas.Shared.Models
+@inject HttpClient Http
+
+<h1>Clientes</h1>
+
+<div class="container mt-5">
+    <h2>Lista de Clientes</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>RFC</th>
+                <th>Nombre</th>
+                <th>Domicilio</th>
+                <th>Teléfono</th>
+                <th>Tiene Crédito</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (clientes != null && clientes.Any())
+            {
+                @foreach (var cliente in clientes)
+                {
+                    <tr>
+                        <td>@cliente.Id</td>
+                        <td>@cliente.RFC</td>
+                        <td>@cliente.Nombre</td>
+                        <td>@cliente.Domicilio</td>
+                        <td>@cliente.Telefono</td>
+                        <td>@(cliente.TieneCredito ? "Sí" : "No")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6">No hay clientes.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2>Agregar Cliente</h2>
+    <form>
+        <div class="form-group">
+            <label for="rfc">RFC:</label>
+            <input type="text" class="form-control" id="rfc" @bind="nuevoCliente.RFC" />
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" @bind="nuevoCliente.Nombre" />
+        </div>
+        <div class="form-group">
+            <label for="domicilio">Domicilio:</label>
+            <input type="text" class="form-control" id="domicilio" @bind="nuevoCliente.Domicilio" />
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="text" class="form-control" id="telefono" @bind="nuevoCliente.Telefono" />
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="tieneCredito" @bind="nuevoCliente.TieneCredito" />
+            <label class="form-check-label" for="tieneCredito">Tiene Crédito</label>
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="AgregarCliente">Guardar</button>
+    </form>
+</div>
+
+@code {
+    List<ClienteDto> clientes = new List<ClienteDto>();
+    ClienteAgregarDto nuevoCliente = new ClienteAgregarDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarClientes();
+    }
+
+    private async Task CargarClientes()
+    {
+        try
+        {
+            clientes = await Http.GetFromJsonAsync<List<ClienteDto>>("api/clientes");
+            StateHasChanged(); // Notificar a Blazor que el estado ha cambiado y debe renderizarse nuevamente
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar clientes: {ex.Message}");
+        }
+    }
+
+    private async Task AgregarCliente()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/clientes", nuevoCliente);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await CargarClientes();
+                nuevoCliente = new ClienteAgregarDto(); // Limpiar el formulario después de agregar cliente
+            }
+            else
+            {
+                Console.WriteLine("Error al agregar el cliente");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el cliente: {ex.Message}");
+        }
+    }
+}
