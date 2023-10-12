@@ -8,5 +8,7 @@
         public int ClaveProducto { get; set; }
         public int ClasificacionId { get; set; }
         public string Clasificacion { get; set; }
+
+        public List<ProveedorDto> Proveedores { get; set; }
     }
 }

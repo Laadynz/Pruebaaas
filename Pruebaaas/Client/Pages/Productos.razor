@@ -13,6 +13,7 @@
                 <th>Unidades en Stock</th>
                 <th>Clave de Producto</th>
                 <th>Clasificación</th>
+                <th>Proveedor</th>
             </tr>
         </thead>
         <tbody>
@@ -25,6 +26,16 @@
                         <td>@producto.UnidadesEnStock</td>
                         <td>@producto.ClaveProducto</td>
                         <td>@producto.Clasificacion</td>
+                        <td>
+                            @foreach (var proveedor in producto.Proveedores)
+                            {
+                                <span class="badge rounded-pill" style="background-color:aquamarine; color: black">
+                                    @proveedor.Nombre
+                                </span>
+
+
+                            }
+                        </td>
                     </tr>
                 }
             }
