@@ -9,10 +9,7 @@
         public string Email { get; set; }
         public string Telefono { get; set; }
 
-
-        // Agrega una propiedad para la clave externa que se relacionará con Producto
-        public int ProductoId { get; set; }
-        public Producto Producto { get; set; }
+        public List<Producto> Productos { get; set; }
 
     }
 }

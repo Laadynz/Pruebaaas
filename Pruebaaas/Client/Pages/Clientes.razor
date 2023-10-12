@@ -80,8 +80,11 @@
     {
         try
         {
-            clientes = await Http.GetFromJsonAsync<List<ClienteDto>>("api/clientes");
-            StateHasChanged(); 
+            var response = await Http.GetFromJsonAsync<List<ClienteDto>>("api/clientes");
+            if (response != null)
+            {
+                clientes = response;
+            }
         }
         catch (Exception ex)
         {
