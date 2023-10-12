@@ -9,11 +9,10 @@
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Unidades en Stock</th>
                 <th>Clave de Producto</th>
-                <th>Clasificación ID</th>
+                <th>Clasificación</th>
             </tr>
         </thead>
         <tbody>
@@ -22,11 +21,10 @@
                 @foreach (var producto in productos)
                 {
                     <tr>
-                        <td>@producto.Id</td>
                         <td>@producto.Nombre</td>
                         <td>@producto.UnidadesEnStock</td>
                         <td>@producto.ClaveProducto</td>
-                        <td>@producto.ClasificacionId</td>
+                        <td>@producto.Clasificacion</td>
                     </tr>
                 }
             }
@@ -54,8 +52,15 @@
             <input type="text" class="form-control" id="claveProducto" @bind="nuevoProducto.ClaveProducto" />
         </div>
         <div class="form-group">
-            <label for="clasificacionId">Clasificación ID:</label>
-            <input type="number" class="form-control" id="clasificacionId" @bind="nuevoProducto.ClasificacionId" />
+            <label for="clasificacionId">Clasificación:</label>
+            <InputSelect @bind-Value="nuevoProducto.ClasificacionId" class="form-control">
+                <option value="">[Seleccione]</option>
+                @foreach (var clasificacion in clasificaciones)
+                {
+                    <option value="@clasificacion.Id">@clasificacion.Descripcion</option>
+
+                }
+            </InputSelect>
         </div>
         <button type="button" class="btn btn-primary" @onclick="AgregarProducto">Guardar</button>
     </form>
@@ -65,9 +70,29 @@
     List<ProductoDto> productos = new List<ProductoDto>();
     ProductoAgregarDto nuevoProducto = new ProductoAgregarDto();
 
+    List<ProductoClasificacionDto> clasificaciones = new List<ProductoClasificacionDto>();
+
     protected override async Task OnInitializedAsync()
     {
+        await CargarProductosClasificaciones();
         await CargarProductos();
+    }
+
+    private async Task CargarProductosClasificaciones()
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<List<ProductoClasificacionDto>>("api/ProductoClasificacion");
+            if (response != null)
+            {
+                clasificaciones = response;
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar clasificaciones: {ex.Message}");
+        }
     }
 
     private async Task CargarProductos()

@@ -42,7 +42,8 @@ namespace Pruebaaas.Server.Controllers
                 Nombre = producto.Nombre,
                 UnidadesEnStock = producto.UnidadesEnStock,
                 ClaveProducto = producto.ClaveProducto,
-                Clasificacion = producto.Clasificacion.Id,
+                Clasificacion = producto.Clasificacion.Descripcion,
+
             };
         }
 

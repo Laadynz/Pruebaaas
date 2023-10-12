@@ -7,6 +7,6 @@
         public decimal UnidadesEnStock { get; set; }
         public int ClaveProducto { get; set; }
         public int ClasificacionId { get; set; }
-        public int Clasificacion { get; set; }
+        public string Clasificacion { get; set; }
     }
 }
