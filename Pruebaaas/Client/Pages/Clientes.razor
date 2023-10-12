@@ -1,8 +1,6 @@
 ﻿@page "/clientes"
-
 @using Pruebaaas.Shared.Models
 @inject HttpClient Http
-@using Microsoft.JSInterop
 
 <h1>Clientes</h1>
 
@@ -20,63 +18,53 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var cliente in clientes)
+            @if (clientes != null && clientes.Any())
+            {
+                @foreach (var cliente in clientes)
+                {
+                    <tr>
+                        <td>@cliente.Id</td>
+                        <td>@cliente.RFC</td>
+                        <td>@cliente.Nombre</td>
+                        <td>@cliente.Domicilio</td>
+                        <td>@cliente.Telefono</td>
+                        <td>@(cliente.TieneCredito ? "Sí" : "No")</td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@cliente.Id</td>
-                    <td>@cliente.RFC</td>
-                    <td>@cliente.Nombre</td>
-                    <td>@cliente.Domicilio</td>
-                    <td>@cliente.Telefono</td>
-                    <td>@(cliente.TieneCredito ? "Sí" : "No")</td>
+                    <td colspan="6">No hay clientes.</td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <button class="btn btn-primary" @onclick="MostrarModal">Agregar Cliente</button>
-</div>
-
-<div class="modal fade" id="agregarClienteModal" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Cliente</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="rfc">RFC:</label>
-                        <input type="text" class="form-control" id="rfc" bind="@nuevoCliente.RFC" />
-                    </div>
-                    <div class="form-group">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" class="form-control" id="nombre" bind="@nuevoCliente.Nombre" />
-                    </div>
-                    <div class="form-group">
-                        <label for="domicilio">Domicilio:</label>
-                        <input type="text" class="form-control" id="domicilio" bind="@nuevoCliente.Domicilio" />
-                    </div>
-                    <div class="form-group">
-                        <label for="telefono">Teléfono:</label>
-                        <input type="text" class="form-control" id="telefono" bind="@nuevoCliente.Telefono" />
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="tieneCredito" bind="@nuevoCliente.TieneCredito" />
-                        <label class="form-check-label" for="tieneCredito">Tiene Crédito</label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" @onclick="AgregarCliente">Guardar</button>
-            </div>
+    <h2>Agregar Cliente</h2>
+    <form>
+        <div class="form-group">
+            <label for="rfc">RFC:</label>
+            <input type="text" class="form-control" id="rfc" @bind="nuevoCliente.RFC" />
         </div>
-    </div>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" class="form-control" id="nombre" @bind="nuevoCliente.Nombre" />
+        </div>
+        <div class="form-group">
+            <label for="domicilio">Domicilio:</label>
+            <input type="text" class="form-control" id="domicilio" @bind="nuevoCliente.Domicilio" />
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="text" class="form-control" id="telefono" @bind="nuevoCliente.Telefono" />
+        </div>
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="tieneCredito" @bind="nuevoCliente.TieneCredito" />
+            <label class="form-check-label" for="tieneCredito">Tiene Crédito</label>
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="AgregarCliente">Guardar</button>
+    </form>
 </div>
 
 @code {
@@ -90,26 +78,36 @@
 
     private async Task CargarClientes()
     {
-        clientes = await Http.GetFromJsonAsync<List<ClienteDto>>("api/clientes");
+        try
+        {
+            clientes = await Http.GetFromJsonAsync<List<ClienteDto>>("api/clientes");
+            StateHasChanged(); // Notificar a Blazor que el estado ha cambiado y debe renderizarse nuevamente
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar clientes: {ex.Message}");
+        }
     }
-
-    private void MostrarModal()
-    {
-        nuevoCliente = new ClienteAgregarDto();
-        JsRuntime.InvokeVoidAsync("AbrirModal", "agregarClienteModal");
-    }
-
 
     private async Task AgregarCliente()
     {
-        var response = await Http.PostAsJsonAsync("api/clientes", nuevoCliente);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            JsRuntime.InvokeVoidAsync("CerrarModal", "agregarClienteModal");
-            await CargarClientes();
+            var response = await Http.PostAsJsonAsync("/api/clientes", nuevoCliente);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await CargarClientes();
+                nuevoCliente = new ClienteAgregarDto(); // Limpiar el formulario después de agregar cliente
+            }
+            else
+            {
+                Console.WriteLine("Error al agregar el cliente");
+            }
         }
-        else
-            Console.WriteLine("Error al agregar el cliente");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al agregar el cliente: {ex.Message}");
+        }
     }
 }
