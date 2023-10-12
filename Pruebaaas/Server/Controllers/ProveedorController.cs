@@ -93,7 +93,7 @@ namespace Pruebaaas.Server.Controllers
         {
             try
             {
-                Proveedor proveedor = await _context.Proveedores
+                Proveedor? proveedor = await _context.Proveedores
                     .FirstOrDefaultAsync(p => p.Id == proveedorDto.Id);
 
                 if (proveedor == null)

@@ -19,55 +19,62 @@ namespace Pruebaaas.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductoClasificacionDto>>> GetProductoClasificaciones()
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetProducto()
         {
-            var productoClasificaciones = await _context.ProductosClasificacion
-                .OrderBy(pc => pc.Descripcion)
+            List<ProductoDto> productosDto = new List<ProductoDto>();
+            var productos = await _context.Productos
+                .Include(c => c.Clasificacion)
+                .OrderBy(pc => pc.Nombre)
                 .ToListAsync();
 
-            var productoClasificacionDtos = productoClasificaciones.Select(pc => new ProductoClasificacionDto
+            foreach (Producto producto in productos)
             {
-                Id = pc.Id,
-                Descripcion = pc.Descripcion,
-                // Puedes incluir más propiedades si es necesario
-            }).ToList();
+                productosDto.Add(MapearProductoDtoDesdeProducto(producto));
+            }
+            return productosDto;
+        }
 
-            return productoClasificacionDtos;
+        private ProductoDto MapearProductoDtoDesdeProducto(Producto producto)
+        {
+            return new ProductoDto
+            {
+                Id = producto.Id,
+                Nombre = producto.Nombre,
+                UnidadesEnStock = producto.UnidadesEnStock,
+                ClaveProducto = producto.ClaveProducto,
+                Clasificacion = producto.Clasificacion.Id,
+            };
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ProductoClasificacionDto>> GetProductoClasificacion(int id)
+        public async Task<ActionResult<ProductoDto>> GetProducto(int id)
         {
-            var productoClasificacion = await _context.ProductosClasificacion
+            var producto = await _context.Productos
+                .Include (c => c.Clasificacion)
                 .FirstOrDefaultAsync(pc => pc.Id == id);
 
-            if (productoClasificacion == null)
+            if (producto == null)
             {
                 return NotFound();
             }
 
-            var productoClasificacionDto = new ProductoClasificacionDto
-            {
-                Id = productoClasificacion.Id,
-                Descripcion = productoClasificacion.Descripcion,
-                // Puedes incluir más propiedades si es necesario
-            };
-
-            return productoClasificacionDto;
+            return MapearProductoDtoDesdeProducto(producto);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddProductoClasificacion(ProductoClasificacionDto productoClasificacionDto)
+        public async Task<ActionResult> Add(ProductoAgregarDto productoDto)
         {
             try
             {
-                var productoClasificacion = new ProductoClasificacion
+                Producto producto = new Producto
                 {
-                    Descripcion = productoClasificacionDto.Descripcion,
-                    // Puedes asignar más propiedades si es necesario
-                };
+                    Nombre = productoDto.Nombre,
+                    UnidadesEnStock = productoDto.UnidadesEnStock,
+                    ClaveProducto = productoDto.ClaveProducto,
+                    ClasificacionId = productoDto.ClasificacionId,
+                };  
 
-                _context.ProductosClasificacion.Add(productoClasificacion);
+                _context.Productos.Add(producto);
                 await _context.SaveChangesAsync();
 
                 return Ok();
@@ -92,7 +99,6 @@ namespace Pruebaaas.Server.Controllers
                 }
 
                 productoClasificacion.Descripcion = productoClasificacionDto.Descripcion;
-                // Actualiza más propiedades si es necesario
 
                 _context.Entry(productoClasificacion).State = EntityState.Modified;
                 await _context.SaveChangesAsync();

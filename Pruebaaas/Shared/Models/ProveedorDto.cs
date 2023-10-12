@@ -14,6 +14,5 @@ namespace Pruebaaas.Shared.Models
         public string Domicilio { get; set; }
         public string Email { get; set; }
         public string Telefono { get; set; }
-        public int ProductoId { get; set; }
     }
 }

@@ -6,6 +6,12 @@
 
 <div class="container mt-5">
     <h2>Lista de Clientes</h2>
+    @if (loadingVisible)
+    {
+        <div class="d-flex align-items-center justify-content-center" style="height: 70; width">
+            <img src="/image/ZKZg.gif" alt="Descripción de la imagen">
+        </div>
+    }
     <table class="table">
         <thead>
             <tr>
@@ -71,6 +77,8 @@
     List<ClienteDto> clientes = new List<ClienteDto>();
     ClienteAgregarDto nuevoCliente = new ClienteAgregarDto();
 
+    private bool loadingVisible = false;
+
     protected override async Task OnInitializedAsync()
     {
         await CargarClientes();
@@ -80,6 +88,7 @@
     {
         try
         {
+            loadingVisible = true;
             var response = await Http.GetFromJsonAsync<List<ClienteDto>>("api/clientes");
             if (response != null)
             {
@@ -89,6 +98,10 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error al cargar clientes: {ex.Message}");
+        }
+        finally
+        {
+            loadingVisible = false;
         }
     }
 
@@ -113,4 +126,10 @@
             Console.WriteLine($"Error al agregar el cliente: {ex.Message}");
         }
     }
+
+
+
+
+
+
 }

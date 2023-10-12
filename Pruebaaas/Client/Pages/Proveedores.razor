@@ -15,7 +15,6 @@
                 <th>Domicilio</th>
                 <th>Email</th>
                 <th>Teléfono</th>
-                <th>Producto ID</th>
             </tr>
         </thead>
         <tbody>
@@ -30,7 +29,6 @@
                         <td>@proveedor.Domicilio</td>
                         <td>@proveedor.Email</td>
                         <td>@proveedor.Telefono</td>
-                        <td>@proveedor.ProductoId</td>
                     </tr>
                 }
             }
@@ -64,10 +62,6 @@
         <div class="form-group">
             <label for="telefono">Teléfono:</label>
             <input type="text" class="form-control" id="telefono" @bind="nuevoProveedor.Telefono" />
-        </div>
-        <div class="form-group">
-            <label for="productoId">Producto ID:</label>
-            <input type="number" class="form-control" id="productoId" @bind="nuevoProveedor.ProductoId" />
         </div>
         <button type="button" class="btn btn-primary" @onclick="AgregarProveedor">Guardar</button>
     </form>
