@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Pruebaaas.Server.Models.Entities;
 using Pruebaaas.Server.Models;
 using Pruebaaas.Shared.Models;
+using Pruebaaas.Client.Pages;
 
 
 namespace Pruebaaas.Server.Controllers
@@ -24,6 +25,7 @@ namespace Pruebaaas.Server.Controllers
             List<ProductoDto> productosDto = new List<ProductoDto>();
             var productos = await _context.Productos
                 .Include(c => c.Clasificacion)
+                .Include(p => p.Proveedores)
                 .OrderBy(pc => pc.Nombre)
                 .ToListAsync();
 
@@ -43,8 +45,24 @@ namespace Pruebaaas.Server.Controllers
                 UnidadesEnStock = producto.UnidadesEnStock,
                 ClaveProducto = producto.ClaveProducto,
                 Clasificacion = producto.Clasificacion.Descripcion,
-
+                Proveedores = MapearProductoProveedorDtoDesdeProducto(producto)
             };
+        }
+
+        private List<ProveedorDto> MapearProductoProveedorDtoDesdeProducto(Producto producto)
+        {
+            List<ProveedorDto> proveedores = new List<ProveedorDto>();
+
+            foreach (Proveedor proveedor in producto.Proveedores)
+            {
+                proveedores.Add(new ProveedorDto
+                {
+                    Id = proveedor.Id,
+                    Nombre = proveedor.Nombre,
+
+                });
+            };
+            return proveedores;
         }
 
         [HttpGet("{id:int}")]
@@ -52,6 +70,7 @@ namespace Pruebaaas.Server.Controllers
         {
             var producto = await _context.Productos
                 .Include(c => c.Clasificacion)
+                .Include(p => p.Proveedores)
                 .FirstOrDefaultAsync(pc => pc.Id == id);
 
             if (producto == null)
@@ -67,12 +86,26 @@ namespace Pruebaaas.Server.Controllers
         {
             try
             {
+                // Mapear la lista de ProveedorDto a entidades de Proveedor usando el método existente
+                List<Proveedor> proveedores = new List<Proveedor>();
+                foreach (ProveedorDto proveedorDto in productoDto.Proveedores)
+                {
+                    proveedores.Add(new Proveedor
+                    {
+                        Id = proveedorDto.Id, // Asegúrate de asignar el Id si es necesario
+                        Nombre = proveedorDto.Nombre,
+                        // Otras propiedades del proveedor si es necesario
+                    });
+                }
+
+                // Crear el objeto Producto con la lista de proveedores mapeada
                 Producto producto = new Producto
                 {
                     Nombre = productoDto.Nombre,
                     UnidadesEnStock = productoDto.UnidadesEnStock,
                     ClaveProducto = productoDto.ClaveProducto,
                     ClasificacionId = productoDto.ClasificacionId,
+                    Proveedores = proveedores
                 };
 
                 _context.Productos.Add(producto);
@@ -85,6 +118,7 @@ namespace Pruebaaas.Server.Controllers
                 return BadRequest();
             }
         }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateProducto(ProductoDto producto)

@@ -8,14 +8,13 @@
     <h2>Lista de Clientes</h2>
     @if (loadingVisible)
     {
-        <div class="d-flex align-items-center justify-content-center" style="height: 70; width">
+        <div class="d-flex align-items-center justify-content-center" style="height: 70px; width">
             <img src="/image/ZKZg.gif" alt="Descripción de la imagen">
         </div>
     }
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>RFC</th>
                 <th>Nombre</th>
                 <th>Domicilio</th>
@@ -29,7 +28,6 @@
                 @foreach (var cliente in clientes)
                 {
                     <tr>
-                        <td>@cliente.Id</td>
                         <td>@cliente.RFC</td>
                         <td>@cliente.Nombre</td>
                         <td>@cliente.Domicilio</td>
