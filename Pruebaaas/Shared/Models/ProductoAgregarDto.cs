@@ -7,6 +7,7 @@
         public int ClaveProducto { get; set; }
         public int ClasificacionId { get; set; }
 
-        public List<ProveedorDto> Proveedores { get; set; }
+        public List<int> ProveedoresIds { get; set; } = new List<int>();
+
     }
 }

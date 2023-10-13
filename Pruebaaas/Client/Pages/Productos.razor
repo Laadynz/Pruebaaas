@@ -47,7 +47,6 @@
             }
         </tbody>
     </table>
-
     <h2>Agregar Producto</h2>
     <form>
         <div class="form-group">
@@ -62,6 +61,7 @@
             <label for="claveProducto">Clave de Producto:</label>
             <input type="text" class="form-control" id="claveProducto" @bind="nuevoProducto.ClaveProducto" />
         </div>
+
         <div class="form-group">
             <label for="clasificacionId">Clasificación:</label>
             <InputSelect @bind-Value="nuevoProducto.ClasificacionId" class="form-control">
@@ -75,8 +75,8 @@
         </div>
 
         <div class="form-group">
-            <label for="proveedores">Proveedor:</label>
-            <InputSelect @bind-Value="nuevoProducto.Proveedores" class="form-control">
+            <label for="proveedorIds">Proveedor:</label>
+            <InputSelect @bind-Value="proveedorSeleccionadoId" class="form-control" multiple>
                 <option value="">[Seleccione Proveedor]</option>
                 @foreach (var proveedor in proveedores)
                 {
@@ -85,9 +85,39 @@
             </InputSelect>
         </div>
 
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (productos != null && productos.Any())
+                {
+                    @foreach (var producto in productos)
+                    {
+                        <tr>
+                            <td>@producto.Id</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">No hay proveedores.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
+        <button type="button" class="btn btn-primary" @onclick="AgregarProveedor">Ageregar Proveedor</button>
 
         <button type="button" class="btn btn-primary" @onclick="AgregarProducto">Guardar</button>
+
+        @foreach (var proveedorid in nuevoProducto.ProveedoresIds)
+        {
+            <label>@proveedorid</label>
+        }
     </form>
 </div>
 
@@ -95,6 +125,7 @@
     List<ProductoDto> productos = new List<ProductoDto>();
     ProductoAgregarDto nuevoProducto = new ProductoAgregarDto();
     List<ProveedorDto> proveedores = new List<ProveedorDto>();
+    int proveedorSeleccionadoId = 0;
     List<ProductoClasificacionDto> clasificaciones = new List<ProductoClasificacionDto>();
 
     protected override async Task OnInitializedAsync()
@@ -104,11 +135,24 @@
         await CargarProductos();
     }
 
+    private void AgregarProveedor()
+    {
+        if (proveedorSeleccionadoId != 0 && !nuevoProducto.ProveedoresIds.Contains(proveedorSeleccionadoId))
+        {
+            nuevoProducto.ProveedoresIds.Add(proveedorSeleccionadoId);
+        }
+
+    }
+
     private async Task CargarProveedores()
     {
         try
         {
-            proveedores = await Http.GetFromJsonAsync<List<ProveedorDto>>("api/proveedores");
+            var response = await Http.GetFromJsonAsync<List<ProveedorDto>>("api/Proveedores");
+            if (response != null)
+            {
+                proveedores = response;
+            }
             StateHasChanged();
         }
         catch (Exception ex)
