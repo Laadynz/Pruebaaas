@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Pruebaaas.Server.Models.Entities;
 using Pruebaaas.Server.Models;
+using Pruebaaas.Server.Models.Entities;
 using Pruebaaas.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Pruebaaas.Server.Controllers
 {

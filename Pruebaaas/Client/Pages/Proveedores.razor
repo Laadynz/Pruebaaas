@@ -1,5 +1,4 @@
 ﻿@page "/proveedores"
-@using Pruebaaas.Shared.Models
 @inject HttpClient Http
 
 <h1>Proveedores</h1>
@@ -96,7 +95,7 @@
             if (response.IsSuccessStatusCode)
             {
                 await CargarProveedores();
-                nuevoProveedor = new ProveedorAgregarDto(); // Limpiar el formulario después de agregar proveedor
+                nuevoProveedor = new ProveedorAgregarDto(); 
             }
             else
             {
