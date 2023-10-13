@@ -6,5 +6,7 @@
         public decimal UnidadesEnStock { get; set; }
         public int ClaveProducto { get; set; }
         public int ClasificacionId { get; set; }
+
+        public List<ProveedorDto> Proveedores { get; set; }
     }
 }

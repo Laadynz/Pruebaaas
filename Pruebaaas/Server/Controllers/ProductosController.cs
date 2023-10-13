@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Pruebaaas.Server.Models.Entities;
 using Pruebaaas.Server.Models;
 using Pruebaaas.Shared.Models;
+using Pruebaaas.Client.Pages;
 
 
 namespace Pruebaaas.Server.Controllers
@@ -85,12 +86,26 @@ namespace Pruebaaas.Server.Controllers
         {
             try
             {
+                // Mapear la lista de ProveedorDto a entidades de Proveedor usando el método existente
+                List<Proveedor> proveedores = new List<Proveedor>();
+                foreach (ProveedorDto proveedorDto in productoDto.Proveedores)
+                {
+                    proveedores.Add(new Proveedor
+                    {
+                        Id = proveedorDto.Id, // Asegúrate de asignar el Id si es necesario
+                        Nombre = proveedorDto.Nombre,
+                        // Otras propiedades del proveedor si es necesario
+                    });
+                }
+
+                // Crear el objeto Producto con la lista de proveedores mapeada
                 Producto producto = new Producto
                 {
                     Nombre = productoDto.Nombre,
                     UnidadesEnStock = productoDto.UnidadesEnStock,
                     ClaveProducto = productoDto.ClaveProducto,
                     ClasificacionId = productoDto.ClasificacionId,
+                    Proveedores = proveedores
                 };
 
                 _context.Productos.Add(producto);
@@ -103,6 +118,7 @@ namespace Pruebaaas.Server.Controllers
                 return BadRequest();
             }
         }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateProducto(ProductoDto producto)

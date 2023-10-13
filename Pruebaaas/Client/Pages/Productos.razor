@@ -65,7 +65,7 @@
         <div class="form-group">
             <label for="clasificacionId">Clasificación:</label>
             <InputSelect @bind-Value="nuevoProducto.ClasificacionId" class="form-control">
-                <option value="">[Seleccione]</option>
+                <option value="">[Seleccione Clasificación]</option>
                 @foreach (var clasificacion in clasificaciones)
                 {
                     <option value="@clasificacion.Id">@clasificacion.Descripcion</option>
@@ -73,6 +73,20 @@
                 }
             </InputSelect>
         </div>
+
+        <div class="form-group">
+            <label for="proveedores">Proveedor:</label>
+            <InputSelect @bind-Value="nuevoProducto.Proveedores" class="form-control">
+                <option value="">[Seleccione Proveedor]</option>
+                @foreach (var proveedor in proveedores)
+                {
+                    <option value="@proveedor.Id">@proveedor.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+
+
+
         <button type="button" class="btn btn-primary" @onclick="AgregarProducto">Guardar</button>
     </form>
 </div>
@@ -80,14 +94,29 @@
 @code {
     List<ProductoDto> productos = new List<ProductoDto>();
     ProductoAgregarDto nuevoProducto = new ProductoAgregarDto();
-
+    List<ProveedorDto> proveedores = new List<ProveedorDto>();
     List<ProductoClasificacionDto> clasificaciones = new List<ProductoClasificacionDto>();
 
     protected override async Task OnInitializedAsync()
     {
         await CargarProductosClasificaciones();
+        await CargarProveedores();
         await CargarProductos();
     }
+
+    private async Task CargarProveedores()
+    {
+        try
+        {
+            proveedores = await Http.GetFromJsonAsync<List<ProveedorDto>>("api/proveedores");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar proveedores: {ex.Message}");
+        }
+    }
+
 
     private async Task CargarProductosClasificaciones()
     {
