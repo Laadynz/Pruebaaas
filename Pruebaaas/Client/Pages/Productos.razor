@@ -76,7 +76,7 @@
 
         <div class="form-group">
             <label for="proveedores">Proveedor:</label>
-            <InputSelect @bind-Value="nuevoProducto.Proveedores" class="form-control">
+            <InputSelect @bind-Value="nuevoProveedor.ProveedorId" class="form-control">
                 <option value="">[Seleccione Proveedor]</option>
                 @foreach (var proveedor in proveedores)
                 {
@@ -94,6 +94,7 @@
 @code {
     List<ProductoDto> productos = new List<ProductoDto>();
     ProductoAgregarDto nuevoProducto = new ProductoAgregarDto();
+    ProveedorAgregarDto nuevoProveedor = new ProveedorAgregarDto();
     List<ProveedorDto> proveedores = new List<ProveedorDto>();
     List<ProductoClasificacionDto> clasificaciones = new List<ProductoClasificacionDto>();
 

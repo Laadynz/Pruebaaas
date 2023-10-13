@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pruebaaas.Shared.Models
+﻿namespace Pruebaaas.Shared.Models
 {
     public class ProveedorDto
     {
