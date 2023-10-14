@@ -90,11 +90,14 @@ namespace Pruebaaas.Server.Controllers
                 List<Proveedor> proveedores = new List<Proveedor>();
                 foreach (ProveedorDto proveedorDto in productoDto.Proveedores)
                 {
-                    proveedores.Add(new Proveedor
+                    Proveedor proveedor = new Proveedor()
                     {
-                        Id = proveedorDto.Id, // Asegúrate de asignar el Id si es necesario
-                        // Otras propiedades del proveedor si es necesario
-                    });
+                        Id = proveedorDto.Id,
+                    };
+
+                    _context.Entry(proveedor).State = EntityState.Unchanged;
+
+                    proveedores.Add(proveedor);
                 }
 
                 // Crear el objeto Producto con la lista de proveedores mapeada
