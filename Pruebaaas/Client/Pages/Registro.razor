@@ -1,0 +1,48 @@
+﻿@page "/registro"
+
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject ILoginService loginService
+
+<h3>Registro</h3>
+
+<EditForm Model="usuario" OnValidSubmit="CrearUsuario">
+    <DataAnnotationsValidator/>
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="usuario.Email" />
+            <ValidationMessage For="@(() => usuario.Email)" />
+        </div>
+        <label>Password:</label>
+        <div>
+            <InputText type="password "class="form-control" @bind-Value="usuario.Password" />
+            <ValidationMessage For="@(() => usuario.Password)" />
+        </div>
+        
+    </div>
+
+    <button type="submit" class="btn btn-info">Registrar</button>
+</EditForm>
+
+@code {
+    private UserDto usuario = new UserDto();
+
+
+    private async Task CrearUsuario()
+    {
+        var respuestaHttp = await repository.Post<UserDto, TokenJwtDto>("api/Cuentas/crear", usuario);
+
+        if (respuestaHttp.Error)
+        {
+            var mensajeError = await respuestaHttp.GetErrorMessageAsync();
+
+        }
+        else
+        {
+            await loginService.Login(respuestaHttp.Response!.Token); 
+            navigationManager.NavigateTo("login");
+        }
+    }
+}
