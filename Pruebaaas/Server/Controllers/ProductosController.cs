@@ -93,7 +93,6 @@ namespace Pruebaaas.Server.Controllers
                     proveedores.Add(new Proveedor
                     {
                         Id = proveedorDto.Id, // Asegúrate de asignar el Id si es necesario
-                        Nombre = proveedorDto.Nombre,
                         // Otras propiedades del proveedor si es necesario
                     });
                 }
