@@ -29,6 +29,19 @@ namespace Pruebaaas.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Folios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UltimoFolio = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Folios", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProductosClasificacion",
                 columns: table => new
                 {
@@ -39,6 +52,23 @@ namespace Pruebaaas.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductosClasificacion", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Proveedores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClaveProveedor = table.Column<int>(type: "int", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Domicilio = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Proveedores", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -119,25 +149,25 @@ namespace Pruebaaas.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Proveedores",
+                name: "ProductoProveedor",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ClaveProveedor = table.Column<int>(type: "int", nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Domicilio = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProductoId = table.Column<int>(type: "int", nullable: false)
+                    ProductosId = table.Column<int>(type: "int", nullable: false),
+                    ProveedoresId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Proveedores", x => x.Id);
+                    table.PrimaryKey("PK_ProductoProveedor", x => new { x.ProductosId, x.ProveedoresId });
                     table.ForeignKey(
-                        name: "FK_Proveedores_Productos_ProductoId",
-                        column: x => x.ProductoId,
+                        name: "FK_ProductoProveedor_Productos_ProductosId",
+                        column: x => x.ProductosId,
                         principalTable: "Productos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductoProveedor_Proveedores_ProveedoresId",
+                        column: x => x.ProveedoresId,
+                        principalTable: "Proveedores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -153,14 +183,14 @@ namespace Pruebaaas.Server.Migrations
                 column: "VentaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductoProveedor_ProveedoresId",
+                table: "ProductoProveedor",
+                column: "ProveedoresId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Productos_ClasificacionId",
                 table: "Productos",
                 column: "ClasificacionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Proveedores_ProductoId",
-                table: "Proveedores",
-                column: "ProductoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ventas_ClienteId",
@@ -175,13 +205,19 @@ namespace Pruebaaas.Server.Migrations
                 name: "Conceptos");
 
             migrationBuilder.DropTable(
-                name: "Proveedores");
+                name: "Folios");
+
+            migrationBuilder.DropTable(
+                name: "ProductoProveedor");
 
             migrationBuilder.DropTable(
                 name: "Ventas");
 
             migrationBuilder.DropTable(
                 name: "Productos");
+
+            migrationBuilder.DropTable(
+                name: "Proveedores");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

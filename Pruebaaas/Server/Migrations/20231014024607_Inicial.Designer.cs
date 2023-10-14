@@ -12,8 +12,8 @@ using Pruebaaas.Server.Models;
 namespace Pruebaaas.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231012053927_nuevo")]
-    partial class nuevo
+    [Migration("20231014024607_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,22 @@ namespace Pruebaaas.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("Pruebaaas.Server.Models.Entities.Folio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("UltimoFolio")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Folios");
                 });
 
             modelBuilder.Entity("Pruebaaas.Server.Models.Entities.Producto", b =>
@@ -268,7 +284,7 @@ namespace Pruebaaas.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("Pruebaaas.Server.Models.Entities.Venta", "Venta")
-                        .WithMany()
+                        .WithMany("Conceptos")
                         .HasForeignKey("VentaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -286,6 +302,11 @@ namespace Pruebaaas.Server.Migrations
             modelBuilder.Entity("Pruebaaas.Server.Models.Entities.ProductoClasificacion", b =>
                 {
                     b.Navigation("Productos");
+                });
+
+            modelBuilder.Entity("Pruebaaas.Server.Models.Entities.Venta", b =>
+                {
+                    b.Navigation("Conceptos");
                 });
 #pragma warning restore 612, 618
         }
