@@ -103,6 +103,11 @@ a, .btn-link {
 
 /*CSS Agregado*/
 
+.class-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
 .titulos-tabla {
     background-color: #F86202;
     color: white;
