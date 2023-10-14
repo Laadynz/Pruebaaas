@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pruebaaas.Server.Models;
 
@@ -11,9 +12,11 @@ using Pruebaaas.Server.Models;
 namespace Pruebaaas.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231012050419_mtom")]
+    partial class mtom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,22 +70,6 @@ namespace Pruebaaas.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clientes");
-                });
-
-            modelBuilder.Entity("Pruebaaas.Server.Models.Entities.Folio", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("UltimoFolio")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Folios");
                 });
 
             modelBuilder.Entity("Pruebaaas.Server.Models.Entities.Producto", b =>
@@ -281,7 +268,7 @@ namespace Pruebaaas.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("Pruebaaas.Server.Models.Entities.Venta", "Venta")
-                        .WithMany("Conceptos")
+                        .WithMany()
                         .HasForeignKey("VentaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -299,11 +286,6 @@ namespace Pruebaaas.Server.Migrations
             modelBuilder.Entity("Pruebaaas.Server.Models.Entities.ProductoClasificacion", b =>
                 {
                     b.Navigation("Productos");
-                });
-
-            modelBuilder.Entity("Pruebaaas.Server.Models.Entities.Venta", b =>
-                {
-                    b.Navigation("Conceptos");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,6 +16,7 @@ namespace Pruebaaas.Server.Models
         public DbSet<ProductoClasificacion> ProductosClasificacion { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<VentaConceptos> Conceptos { get; set; }
+        public DbSet<Folio> Folios { get; set; }
 
     }
 
