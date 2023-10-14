@@ -17,7 +17,7 @@
         </div>
         <label>Password:</label>
         <div>
-            <InputText type="password "class="form-control" @bind-Value="usuario.Password" />
+            <InputText type="password" class="form-control" @bind-Value="usuario.Password" />
             <ValidationMessage For="@(() => usuario.Password)" />
         </div>
         
@@ -32,7 +32,7 @@
 
     private async Task CrearUsuario()
     {
-        var respuestaHttp = await repository.Post<UserDto, TokenJwtDto>("api/Cuentas/crear", usuario);
+        var respuestaHttp = await repository.Post<UserDto, TokenJwtDto>("api/Cuentas/create", usuario);
 
         if (respuestaHttp.Error)
         {
