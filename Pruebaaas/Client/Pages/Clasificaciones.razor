@@ -10,6 +10,7 @@
         <thead>
             <tr>
                 <th>Descripción</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -19,6 +20,8 @@
                 {
                     <tr>
                         <td>@clasificacion.Descripcion</td>
+                        <td><button class="btn btn-link" @onclick="() => SeleccionarClasificacion(clasificacion)">Seleccionar</button></td>
+
                     </tr>
                 }
             }
@@ -37,7 +40,10 @@
             <label for="descripcion">Descripción:</label>
             <input type="text" class="form-control" id="descripcion" @bind="nuevaClasificacion.Descripcion" />
         </div>
+        <br />
         <button type="button" class="btn btn-primary" @onclick="CrearClasificacion">Guardar</button>
+                <button type="button" class="btn btn-primary" @onclick="EliminarClasificacion">Borrar</button>
+        <button type="button" class="btn btn-primary" @onclick="ActualizarClasificacion">Actualizar</button>
     </form>
 </div>
 
@@ -61,6 +67,12 @@
         {
             Console.WriteLine($"Error al cargar clasificaciones: {ex.Message}");
         }
+    }
+
+private void SeleccionarClasificacion(ProductoClasificacionDto clasificacion)
+    {
+        nuevaClasificacion = clasificacion;
+        nuevaClasificacion.Descripcion = clasificacion.Descripcion;
     }
 
     private async Task CrearClasificacion()
@@ -87,4 +99,62 @@
             Console.WriteLine($"Error al agregar la clasificación: {ex.Message}");
         }
     }
+
+    private async Task EliminarClasificacion()
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"/api/ProductoClasificacion/{nuevaClasificacion.Id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                await CargarClasificaciones();
+                nuevaClasificacion = new ProductoClasificacionDto(); // Limpiar el formulario después de eliminar clasificación
+                StateHasChanged(); // Asegurar que la interfaz de usuario se actualice
+            }
+            else
+            {
+                // Manejar errores de la respuesta del servidor
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error del servidor: {errorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar la clasificación: {ex.Message}");
+        }
+    }
+
+    private async Task ActualizarClasificacion()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"/api/ProductoClasificacion/{nuevaClasificacion.Id}", nuevaClasificacion);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await CargarClasificaciones();
+                nuevaClasificacion = new ProductoClasificacionDto(); // Limpiar el formulario después de actualizar clasificación
+                StateHasChanged(); // Asegurar que la interfaz de usuario se actualice
+            }
+            else
+            {
+                // Manejar errores de la respuesta del servidor
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error del servidor: {errorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar la clasificación: {ex.Message}");
+        }
+    }
+
+
+
+
+
+
+
+
 }

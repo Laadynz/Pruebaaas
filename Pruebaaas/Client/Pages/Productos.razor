@@ -87,7 +87,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th>Clave de Proveedor</th>
                     <th>Proveedor</th>
                 </tr>
             </thead>
@@ -97,7 +97,7 @@
                     @foreach (var proveedor in nuevoProducto.Proveedores)
                     {
                         <tr>
-                            <td>@proveedor.Id</td>
+                            <td>@proveedor.ClaveProveedor</td>
                             <td>@proveedor.Nombre</td>
                         </tr>
                     }
