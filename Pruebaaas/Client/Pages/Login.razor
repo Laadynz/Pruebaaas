@@ -1,0 +1,48 @@
+﻿@page "/login"
+
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject ILoginService loginService
+
+<h3>Login</h3>
+
+<EditForm Model="usuario" OnValidSubmit="LoguearUser">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="usuario.Email" />
+            <ValidationMessage For="@(() => usuario.Email)" />
+        </div>
+        <label>Password:</label>
+        <div>
+            <InputText type="password" class="form-control" @bind-Value="usuario.Password" />
+            <ValidationMessage For="@(() => usuario.Password)" />
+        </div>
+
+    </div>
+
+    <button type="submit" class="btn btn-info">Ingresar</button>
+</EditForm>
+
+@code {
+    private UserDto usuario = new UserDto();
+
+
+    private async Task LoguearUser()
+    {
+        var respuestaHttp = await repository.Post<UserDto, TokenJwtDto>("api/Cuentas/login", usuario);
+
+        if (respuestaHttp.Error)
+        {
+            var mensajeError = await respuestaHttp.GetErrorMessageAsync();
+
+        }
+        else
+        {
+            await loginService.Login(respuestaHttp.Response!.Token);
+            navigationManager.NavigateTo("login");
+        }
+    }
+}
