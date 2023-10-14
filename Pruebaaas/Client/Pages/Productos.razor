@@ -6,7 +6,7 @@
 <div class="container mt-5">
     <h2>Lista de Productos</h2>
     <table class="table">
-        <thead>
+        <thead class="titulos-tabla">
             <tr>
                 <th>Nombre</th>
                 <th>Unidades en Stock</th>
@@ -85,7 +85,7 @@
         </div>
 
         <table class="table">
-            <thead>
+            <thead class="table-productos-espacio">
                 <tr>
                     <th>Clave de Proveedor</th>
                     <th>Proveedor</th>
@@ -111,9 +111,12 @@
             </tbody>
         </table>
 
-        <button type="button" class="btn btn-primary" @onclick="AgregarProveedor">Agregar Proveedor</button>
+        <button type="button" id="boton-agregar" class="btn btn-primary" @onclick="AgregarProveedor">Agregar Proveedor</button>
 
-        <button type="button" class="btn btn-primary" @onclick="AgregarProducto">Guardar</button>
+        <button type="button" id="boton-guardar" class="btn btn-primary" @onclick="AgregarProducto">
+            <i class="bi bi-save"></i>
+            Guardar
+        </button>
 
     </form>
 </div>

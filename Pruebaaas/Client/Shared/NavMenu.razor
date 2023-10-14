@@ -7,6 +7,13 @@
     </div>
 </div>
 
+<style>
+    .class-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+</style>
+
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
@@ -16,27 +23,27 @@
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/clientes">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Clientes
+                <span class="bi bi-person-fill class-icon" aria-hidden="true"></span> Clientes
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/clasificaciones">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Clasificaciones
+                <span class="bi bi-filter-square-fill class-icon" aria-hidden="true"></span> Clasificaciones
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/productos">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Productos
+                <span class="bi bi-basket3-fill class-icon" aria-hidden="true"></span> Productos
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/proveedores">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Proveedores
+                <span class="bi bi-box-seam-fill class-icon" aria-hidden="true"></span> Proveedores
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/ventas">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Ventas
+                <span class="bi bi-currency-dollar class-icon" aria-hidden="true"></span> Ventas
             </NavLink>
         </div>
     </nav>

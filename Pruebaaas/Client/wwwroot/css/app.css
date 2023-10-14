@@ -99,3 +99,35 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+
+
+/*CSS Agregado*/
+
+.titulos-tabla {
+    background-color: #F86202;
+    color: white;
+    border: none;
+}
+
+.table {
+   margin-top: 20px;
+}
+
+.table-productos-espacio {
+    background-color: #F86202;
+    color: white;
+    margin-top: 25px;
+}
+
+#boton-borrar {
+    background-color: #db2828;
+    margin: 15px 4px;
+    border: none;
+}
+
+#boton-guardar, #boton-agregar {
+    background-color: #21ba45;
+    margin: 15px 4px;
+    border: none;
+}
+
