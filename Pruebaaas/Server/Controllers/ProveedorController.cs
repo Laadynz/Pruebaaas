@@ -89,12 +89,12 @@ namespace Pruebaaas.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(ProveedorDto proveedorDto)
+        public async Task<ActionResult> Update(int id, [FromBody] ProveedorAgregarDto proveedorDto)
         {
             try
             {
-                Proveedor? proveedor = await _context.Proveedores
-                    .FirstOrDefaultAsync(p => p.Id == proveedorDto.Id);
+                Proveedor proveedor = await _context.Proveedores
+                    .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (proveedor == null)
                 {
@@ -112,11 +112,12 @@ namespace Pruebaaas.Server.Controllers
 
                 return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
                 return BadRequest();
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)

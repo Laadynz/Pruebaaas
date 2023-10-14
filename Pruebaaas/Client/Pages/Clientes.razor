@@ -1,6 +1,7 @@
 ﻿@page "/clientes"
 @using Pruebaaas.Shared.Models
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
 
 <h1>Clientes</h1>
 
@@ -17,9 +18,11 @@
             <tr>
                 <th>RFC</th>
                 <th>Nombre</th>
+                <th>Correo</th>
                 <th>Domicilio</th>
                 <th>Teléfono</th>
                 <th>Tiene Crédito</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -30,16 +33,18 @@
                     <tr>
                         <td>@cliente.RFC</td>
                         <td>@cliente.Nombre</td>
+                        <td>@cliente.Correo</td>
                         <td>@cliente.Domicilio</td>
                         <td>@cliente.Telefono</td>
                         <td>@(cliente.TieneCredito ? "Sí" : "No")</td>
+                        <td><button class="btn btn-link" @onclick="() => SeleccionarCliente(cliente)">Seleccionar</button></td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="6">No hay clientes.</td>
+                    <td colspan="7">No hay clientes.</td>
                 </tr>
             }
         </tbody>
@@ -56,6 +61,10 @@
             <input type="text" class="form-control" id="nombre" @bind="nuevoCliente.Nombre" />
         </div>
         <div class="form-group">
+            <label for="correo">Correo:</label>
+            <input type="text" class="form-control" id="correo" @bind="nuevoCliente.Correo" />
+        </div>
+        <div class="form-group">
             <label for="domicilio">Domicilio:</label>
             <input type="text" class="form-control" id="domicilio" @bind="nuevoCliente.Domicilio" />
         </div>
@@ -67,12 +76,22 @@
             <input type="checkbox" class="form-check-input" id="tieneCredito" @bind="nuevoCliente.TieneCredito" />
             <label class="form-check-label" for="tieneCredito">Tiene Crédito</label>
         </div>
+        <br />
         <button type="button" class="btn btn-primary" @onclick="AgregarCliente">Guardar</button>
+        <button type="button" class="btn btn-primary" @onclick="EliminarCliente">Borrar</button>
+        <button type="button" class="btn btn-primary" @onclick="ActualizarCliente">Actualizar</button>
+
+
+
+
+
+
     </form>
 </div>
 
 @code {
     List<ClienteDto> clientes = new List<ClienteDto>();
+    ClienteDto clienteSeleccionado = null;
     ClienteAgregarDto nuevoCliente = new ClienteAgregarDto();
 
     private bool loadingVisible = false;
@@ -81,6 +100,10 @@
     {
         await CargarClientes();
     }
+
+
+
+
 
     private async Task CargarClientes()
     {
@@ -103,6 +126,7 @@
         }
     }
 
+
     private async Task AgregarCliente()
     {
         try
@@ -112,7 +136,6 @@
             if (response.IsSuccessStatusCode)
             {
                 await CargarClientes();
-                nuevoCliente = new ClienteAgregarDto(); // Limpiar el formulario después de agregar cliente
             }
             else
             {
@@ -125,9 +148,80 @@
         }
     }
 
+    private async Task EliminarCliente()
+    {
+        try
+        {
+            if (clienteSeleccionado != null)
+            {
+                var response = await Http.DeleteAsync($"/api/clientes/{clienteSeleccionado.Id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await CargarClientes();
+                    clienteSeleccionado = null; 
+                    nuevoCliente = new ClienteAgregarDto(); 
+                }
+                else
+                {
+                    Console.WriteLine("Error al eliminar el cliente");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No hay cliente seleccionado para eliminar");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar el cliente: {ex.Message}");
+        }
+    }
+
+private async Task ActualizarCliente()
+    {
+        try
+        {
+            if (clienteSeleccionado != null)
+            {
+                var response = await Http.PutAsJsonAsync($"/api/clientes/{clienteSeleccionado.Id}", nuevoCliente);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await CargarClientes();
+                    clienteSeleccionado = null; 
+                    nuevoCliente = new ClienteAgregarDto(); 
+                }
+                else
+                {
+                    Console.WriteLine("Error al actualizar el cliente");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No hay cliente seleccionado para actualizar");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar el cliente: {ex.Message}");
+        }
+    }
 
 
 
+
+
+    private void SeleccionarCliente(ClienteDto cliente)
+    {
+        clienteSeleccionado = cliente;
+        nuevoCliente.RFC = cliente.RFC;
+        nuevoCliente.Nombre = cliente.Nombre;
+        nuevoCliente.Correo = cliente.Correo;
+        nuevoCliente.Domicilio = cliente.Domicilio;
+        nuevoCliente.Telefono = cliente.Telefono;
+        nuevoCliente.TieneCredito = cliente.TieneCredito;
+    }
 
 
 }

@@ -24,6 +24,7 @@ namespace Pruebaaas.Server.Controllers
                 Id = cliente.Id,
                 RFC = cliente.RFC,
                 Nombre = cliente.Nombre,
+                Correo = cliente.Correo,
                 Domicilio = cliente.Domicilio,
                 Telefono = cliente.Telefono,
                 TieneCredito = cliente.TieneCredito
@@ -71,6 +72,7 @@ namespace Pruebaaas.Server.Controllers
                 {
                     RFC = clienteDto.RFC,
                     Nombre = clienteDto.Nombre,
+                    Correo = clienteDto.Correo,
                     Domicilio = clienteDto.Domicilio,
                     Telefono = clienteDto.Telefono,
                     TieneCredito = clienteDto.TieneCredito
@@ -88,47 +90,37 @@ namespace Pruebaaas.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(ClienteDto clienteDto)
+        public async Task<ActionResult> Update(int id, ClienteDto clienteDto)
         {
             try
             {
-                Cliente? cliente = await _context.Clientes
-                    .FirstOrDefaultAsync(c => c.Id == clienteDto.Id);
+                var cliente = await _context.Clientes
+                    .FirstOrDefaultAsync(c => c.Id == id);
 
-                if (cliente == null) { return NotFound(); }
-
-                if (!string.IsNullOrWhiteSpace(clienteDto.RFC))
+                if (cliente == null)
                 {
-                    cliente.RFC = clienteDto.RFC;
+                    return NotFound();
                 }
 
-                if (!string.IsNullOrWhiteSpace(clienteDto.Nombre))
-                {
-                    cliente.Nombre = clienteDto.Nombre;
-                }
-
-                if (!string.IsNullOrWhiteSpace(clienteDto.Domicilio))
-                {
-                    cliente.Domicilio = clienteDto.Domicilio;
-                }
-
-                if (!string.IsNullOrWhiteSpace(clienteDto.Telefono))
-                {
-                    cliente.Telefono = clienteDto.Telefono;
-                }
-
+                cliente.RFC = clienteDto.RFC;
+                cliente.Nombre = clienteDto.Nombre;
+                cliente.Correo = clienteDto.Correo;
+                cliente.Domicilio = clienteDto.Domicilio;
+                cliente.Telefono = clienteDto.Telefono;
                 cliente.TieneCredito = clienteDto.TieneCredito;
-
 
                 _context.Entry(cliente).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+
                 return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
+                // Log the exception or handle it accordingly
                 return BadRequest();
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)

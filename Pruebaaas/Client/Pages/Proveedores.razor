@@ -14,6 +14,7 @@
                 <th>Domicilio</th>
                 <th>Email</th>
                 <th>Teléfono</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -27,13 +28,14 @@
                         <td>@proveedor.Domicilio</td>
                         <td>@proveedor.Email</td>
                         <td>@proveedor.Telefono</td>
+                        <td><button class="btn btn-link" @onclick="() => SeleccionarProveedor(proveedor)">Seleccionar</button></td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="7">No hay proveedores.</td>
+                    <td colspan="6">No hay proveedores.</td>
                 </tr>
             }
         </tbody>
@@ -41,6 +43,7 @@
 
     <h2>Agregar Proveedor</h2>
     <form>
+        <!-- Campos de entrada para nuevo proveedor -->
         <div class="form-group">
             <label for="claveProveedor">Clave de Proveedor:</label>
             <input type="number" class="form-control" id="claveProveedor" @bind="nuevoProveedor.ClaveProveedor" />
@@ -61,13 +64,19 @@
             <label for="telefono">Teléfono:</label>
             <input type="text" class="form-control" id="telefono" @bind="nuevoProveedor.Telefono" />
         </div>
+        <br />
         <button type="button" class="btn btn-primary" @onclick="AgregarProveedor">Guardar</button>
+
+        <button type="button" class="btn btn-primary" @onclick="EliminarProveedor" disabled=@(proveedorSeleccionado == null)>Borrar</button>
+
+        <button type="button" class="btn btn-primary" @onclick="ActualizarProveedor" disabled=@(proveedorSeleccionado == null)>Actualizar</button>
     </form>
 </div>
 
 @code {
     List<ProveedorDto> proveedores = new List<ProveedorDto>();
     ProveedorAgregarDto nuevoProveedor = new ProveedorAgregarDto();
+    ProveedorDto proveedorSeleccionado = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,5 +116,77 @@
         {
             Console.WriteLine($"Error al agregar el proveedor: {ex.Message}");
         }
+    }
+
+    private async Task EliminarProveedor()
+    {
+        try
+        {
+            if (proveedorSeleccionado != null)
+            {
+                var response = await Http.DeleteAsync($"/api/proveedores/{proveedorSeleccionado.Id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await CargarProveedores();
+                    proveedorSeleccionado = null; // Limpiar el proveedor seleccionado después de la eliminación
+                    nuevoProveedor = new ProveedorAgregarDto(); // Limpiar los campos del formulario después de la eliminación
+                }
+                else
+                {
+                    Console.WriteLine("Error al eliminar el proveedor");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No hay proveedor seleccionado para eliminar");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al eliminar el proveedor: {ex.Message}");
+        }
+    }
+
+    private async Task ActualizarProveedor()
+    {
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"/api/proveedores/{proveedorSeleccionado.Id}", nuevoProveedor);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await CargarProveedores();
+                proveedorSeleccionado = null; // Limpiar el proveedor seleccionado después de la actualización
+                nuevoProveedor = new ProveedorAgregarDto(); // Limpiar los campos del formulario después de la actualización
+            }
+            else
+            {
+                Console.WriteLine("Error al actualizar el proveedor");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al actualizar el proveedor: {ex.Message}");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    private void SeleccionarProveedor(ProveedorDto proveedor)
+    {
+        proveedorSeleccionado = proveedor;
+        nuevoProveedor.ClaveProveedor = proveedor.ClaveProveedor;
+        nuevoProveedor.Nombre = proveedor.Nombre;
+        nuevoProveedor.Domicilio = proveedor.Domicilio;
+        nuevoProveedor.Email = proveedor.Email;
+        nuevoProveedor.Telefono = proveedor.Telefono;
     }
 }

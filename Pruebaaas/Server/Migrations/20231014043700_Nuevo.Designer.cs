@@ -12,8 +12,8 @@ using Pruebaaas.Server.Models;
 namespace Pruebaaas.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231014024607_Inicial")]
-    partial class Inicial
+    [Migration("20231014043700_Nuevo")]
+    partial class Nuevo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,10 @@ namespace Pruebaaas.Server.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Domicilio")
                         .IsRequired()
