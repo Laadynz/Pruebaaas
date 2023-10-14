@@ -7,14 +7,8 @@
 
 <div class="container mt-5">
     <h2>Lista de Clientes</h2>
-    @if (loadingVisible)
-    {
-        <div class="d-flex align-items-center justify-content-center" style="height: 70px; width">
-            <img src="/image/ZKZg.gif" alt="Descripción de la imagen">
-        </div>
-    }
     <table class="table">
-        <thead>
+        <thead class="table-productos-espacio">
             <tr>
                 <th>RFC</th>
                 <th>Nombre</th>
@@ -77,9 +71,18 @@
             <label class="form-check-label" for="tieneCredito">Tiene Crédito</label>
         </div>
         <br />
-        <button type="button" class="btn btn-primary" @onclick="AgregarCliente">Guardar</button>
-        <button type="button" class="btn btn-primary" @onclick="EliminarCliente">Borrar</button>
-        <button type="button" class="btn btn-primary" @onclick="ActualizarCliente">Actualizar</button>
+        <button type="button" id="boton-guardar" class="btn btn-primary" @onclick="AgregarCliente">
+            <i class="bi bi-save"></i>
+            Guardar
+        </button>
+        <button type="button" id="boton-borrar" class="btn btn-primary" @onclick="EliminarCliente">
+            <i class="bi bi-x-circle"></i>
+            Borrar
+        </button>
+        <button type="button" class="btn btn-primary xd" @onclick="ActualizarCliente">
+            <i class="bi bi-arrow-clockwise"></i>
+            Actualizar
+        </button>
 
 
 

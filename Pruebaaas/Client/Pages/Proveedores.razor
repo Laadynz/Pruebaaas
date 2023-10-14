@@ -7,7 +7,7 @@
 <div class="container mt-5">
     <h2>Lista de Proveedores</h2>
     <table class="table">
-        <thead>
+        <thead class="table-productos-espacio">
             <tr>
                 <th>Clave de Proveedor</th>
                 <th>Nombre</th>
@@ -65,11 +65,20 @@
             <input type="text" class="form-control" id="telefono" @bind="nuevoProveedor.Telefono" />
         </div>
         <br />
-        <button type="button" class="btn btn-primary" @onclick="AgregarProveedor">Guardar</button>
+        <button type="button" id="boton-guardar" class="btn btn-primary" @onclick="AgregarProveedor">
+            <i class="bi bi-save"></i>
+            Guardar
+            </button>
 
-        <button type="button" class="btn btn-primary" @onclick="EliminarProveedor" disabled=@(proveedorSeleccionado == null)>Borrar</button>
+        <button type="button" id="boton-borrar" class="btn btn-primary" @onclick="EliminarProveedor" disabled=@(proveedorSeleccionado == null)>
+            <i class="bi bi-x-circle"></i>
+            Borrar
+            </button>
 
-        <button type="button" class="btn btn-primary" @onclick="ActualizarProveedor" disabled=@(proveedorSeleccionado == null)>Actualizar</button>
+        <button type="button" class="btn btn-primary" @onclick="ActualizarProveedor" disabled=@(proveedorSeleccionado == null)>
+            <i class="bi bi-arrow-clockwise"></i>
+            Actualizar
+            </button>
     </form>
 </div>
 
