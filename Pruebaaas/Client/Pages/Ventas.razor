@@ -1,75 +1,183 @@
-﻿@page "/ventas"
-@inject HttpClient Http
-@using Pruebaaas.Shared.Models
-@using System.Net.Http.Json
+﻿@page "/Ventas"
+@inject HttpClient httpClient
 
-<h1>Venta</h1>
+<div class="container mt-5">
+    <h3>Nueva Venta</h3>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row mt-3">
+                <div class="col-4">
+                    <InputText class="form-control" placeholder="Clave de Producto" @bind-Value="claveProducto"></InputText>
+                </div>
+                <div class="col-2">
+                    <InputNumber class="form-control" placeholder="Cantidad" @bind-Value="cantidad"></InputNumber>
+                </div>
+                <div class="col-2">
+                    <select class="form-control" placeholder="Tipo de Pago">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-success" @onclick="AgregarProducto"><i class="bi bi-save"></i> Agregar Producto</button>
+                </div>
+            </div>
 
-<button type="button" id="boton-agregar" class="btn btn-success" @onclick="AgregarProducto"><i class="bi bi-save"></i> Agregar Producto</button>
-<div>
-    @if (nuevaVenta.Conceptos != null)
+            <div class="row mt-3">
+                <div class="col-12">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ClaveProducto</th>
+                                <th>Descripcion</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Sub Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ventaAdd.Conceptos)
+                            {
+                                <tr>
+                                    <td>@item.ClaveProducto</td>
+                                    <td>@item.Descripcion</td>
+                                    <td>@item.PrecioUnitario</td>
+                                    <td>@item.Cantidad</td>
+                                    <td>@item.Importe</td>
+                                    <td>
+                                        <button class="btn btn-danger" @onclick="(() => EliminarProducto(item.ProductoId))"><i class="bi bi-x-circle"></i> Eliminar Producto</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-primary" @onclick="RegistrarVenta"><i class="bi bi-receipt"></i> Crear Venta</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    //para la venta
+    List<VentaDto> listVentas = new List<VentaDto>();
+    VentaDto nuevaVenta = new VentaDto();
+
+    //Para agregar clientes y productos a la venta:
+    VentaAgregarDto ventaAdd = new VentaAgregarDto() { Conceptos = new List<VentaConceptosDto>() };
+
+    List<VentaConceptosDto> listaProductos = new List<VentaConceptosDto>();
+    ProductoDto productoSeleccionado = null!;
+    
+    List<VentaConceptosDto> listaClientes = new List<VentaConceptosDto>();
+    ClienteDto clienteSeleccionado = null!;
+
+    
+    bool botonDesactivado = false;
+
+    private int cantidad = 0;
+    string claveProducto = null!;
+
+
+
+    private void BuscarProducto(ChangeEventArgs e)
     {
-        @for (var i = 0; i < nuevaVenta.Conceptos.Count; i++)
+        string valor = e.Value!.ToString()!;
+
+        if (string.IsNullOrEmpty(valor))
+            return;
+
+        var productoEncontrado = listaProductos.FirstOrDefault(p => p.ClaveProducto == valor);
+
+        if (productoEncontrado != null)
         {
-            var concepto = nuevaVenta.Conceptos[i];
-
-            <div>
-                <label for="concepto.ClaveProducto">Clave del Producto:</label>
-                <input type="text" @bind="concepto.ClaveProducto" />
-            </div>
-            <br />
-            <div>
-                <label for="concepto.Cantidad">Cantidad:</label>
-                <input type="number" @bind="concepto.Cantidad" />
-            </div>
-            <br />
-            <div>
-                <label for="concepto.Descuento">Descuento:</label>
-                <input type="number" @bind="concepto.Descuento" />
-            </div>
-
-
-            <button type="button" id="boton-borrar" class="btn btn-danger" @onclick="() => EliminarProducto(i)"><i class="bi bi-x-circle"></i> Eliminar Producto</button>
+            claveProducto = productoEncontrado.ClaveProducto;
         }
     }
-</div>
 
-<div class="container mt-5">
-    <h2>Ventas</h2>
-    <table class="table">
-        <thead class="titulos-tabla">
-            <tr>
-                <th>Id</th>
-                <th>Nombre producto</th>
-                <th>Cantidad</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (ventas != null && ventas.Any())
+    private async Task AgregarProducto()
+    {
+        if (productoSeleccionado != null && cantidad > 0)
+        {
+            try
             {
-                @foreach (var venta in ventas)
+                var response = await httpClient.GetFromJsonAsync<VentaConceptosDto>("api/Ventas");
+
+                if (response != null)
                 {
-                    <tr>
-                        <td>@venta.Folio</td>
-                        <td>@venta.Fecha.ToString("dd/MM/yyyy")</td>
-                        <td>@venta.Total.ToString("C2")</td>
-                        <td>@venta.Cliente.Nombre</td>
-                    </tr>
+                    var nuevoConcepto = new VentaConceptosDto
+                        {
+                            ClaveProducto = response.ClaveProducto, 
+                            Descripcion = response.Descripcion,
+                            PrecioUnitario = response.PrecioUnitario,
+                            Cantidad = cantidad,
+                            Importe = response.Importe,
+                            ProductoId = response.ProductoId
+                        };
+
+                    nuevaVenta.Conceptos.Add(nuevoConcepto);
+                    claveProducto = null!;
+                    cantidad = 0;
+                }
+                else
+                {
+                    Console.WriteLine("Error al agregar el producto");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                <tr>
-                    <td colspan="4">No hay ventas.</td>
-                </tr>
+                Console.WriteLine($"Error al agregar el producto: {ex.Message}");
             }
-        </tbody>
-    </table>
-</div>
+        }
+    }
 
 
-<div class="container mt-5">
+    private async Task EliminarProducto(int productoId)
+    {
+        var productoEliminar = ventaAdd.Conceptos.Find(c => c.ProductoId == productoId);
+        ventaAdd.Conceptos.Remove(productoEliminar);
+    }
+
+    private async Task RegistrarVenta()
+    {
+        botonDesactivado = true;
+
+        nuevaVenta.Total = ventaAdd.Conceptos.Sum(c => c.Importe);
+        nuevaVenta.Fecha = DateTime.Now;
+        nuevaVenta.Cliente = clienteSeleccionado;
+
+        var response = await httpClient.PostAsJsonAsync("api/Venta/Add", ventaAdd);
+
+        if (response.IsSuccessStatusCode)
+        {
+            clienteSeleccionado = null!;
+            claveProducto = "";
+            cantidad = 0;
+        }
+        else
+        {
+            Console.WriteLine("Error");
+        }
+
+        botonDesactivado = false;
+    }
+}
+
+@*AQUIII ESTÁ LO DE LA VENTA, NO SUPE DONDE LO TENGO QUE METER
+
+ALGUIEN QUE SE TOME LA MOLESTIA DE LEER EL CÓDIGO POR FAVOR!!! PARA QUE LO ACOMODE XD 
+
+*@
+
+@* <div class="container mt-5">
     <h2>Lista de Ventas</h2>
     <table class="table">
         <thead class="titulos-tabla">
@@ -122,110 +230,30 @@
         <button type="submit" id="boton-agregar" class="btn btn-primary">
             <i class="bi bi-receipt"></i>
             Crear Venta
-            </button>
+        </button>
     </form>
-</div>
+</div> *@
 
-@code {
-    List<VentaDto> ventas = new List<VentaDto>();
-    VentaDto ventaAdd = new VentaDto();
-    VentaAgregarDto nuevaVenta = new VentaAgregarDto();
-    List<ClienteDto> clientes = new List<ClienteDto>();
 
-    protected override async Task OnInitializedAsync()
+@* <label for="ClienteId">Cliente:</label>
+<InputSelect @bind-Value="venta.Cliente" class="form-control">
+    <option value="">[Seleccione Cliente]</option>
+    @foreach (var cliente in clientes)
     {
-        await CargarVentas();
-        await CargarClientes();
+        <option value="@cliente.Id">@cliente.Nombre</option>
     }
+</InputSelect>
 
-    private async Task AgregarProducto()
-    {
-        try
-        {
-            if (nuevaVenta.Conceptos == null)
-            {
-                nuevaVenta.Conceptos = new List<VentaConceptosDto>();
-            }
-
-            if (nuevaVenta.Conceptos.Count > 0)
-            {
-                var productoAEliminar = nuevaVenta.Conceptos[0];
-
-                nuevaVenta.Conceptos.Remove(productoAEliminar);
-            }
-
-            nuevaVenta.Conceptos.Add(new VentaConceptosDto());
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al agregar la venta: {ex.Message}");
-        }
-    }
-
-    private void EliminarProducto(int index)
-    {
-        if (index >= 0 && index < nuevaVenta.Conceptos.Count)
-        {
-            nuevaVenta.Conceptos.RemoveAt(index);
-        }
-    }
-
-    private async Task CargarVentas()
-    {
-        try
-        {
-            var response = await Http.GetFromJsonAsync<List<VentaDto>>("api/venta");
-            if (response != null)
-            {
-                ventas = response;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar ventas: {ex.Message}");
-        }
-    }
-
-    private async Task CargarClientes()
-    {
-        try
-        {
-            var response = await Http.GetFromJsonAsync<List<ClienteDto>>("api/cliente");
-            if (response != null)
-            {
-                clientes = response;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al cargar clientes: {ex.Message}");
-        }
-    }
-
-    private decimal CalcularImporte(VentaConceptosDto concepto)
-    {
-        return concepto.Cantidad * concepto.PrecioUnitario;
-    }
-
-    private async Task CrearVenta()
-    {
-        try
-        {
-            var response = await Http.PostAsJsonAsync("api/venta/Add", nuevaVenta);
-
-            if (response.IsSuccessStatusCode)
-            {
-                await CargarVentas();
-                nuevaVenta = new VentaAgregarDto();
-            }
-            else
-            {
-                Console.WriteLine("Error al crear la venta");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error al crear la venta: {ex.Message}");
-        }
-    }
-}
+@if (venta.Cliente != null)
+{
+    <div class="row mt-3">
+        <div class="col-6">
+            <label for="NombreCliente">Nombre del Cliente:</label>
+            <InputText @bind-Value="venta.Cliente.Nombre" class="form-control" readonly></InputText>
+        </div>
+        <div class="col-6">
+            <label for="RFCCliente">RFC del Cliente:</label>
+            <InputText @bind-Value="venta.Cliente.RFC" class="form-control" readonly></InputText>
+        </div>
+    </div>
+} *@
