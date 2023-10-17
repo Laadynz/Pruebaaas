@@ -107,6 +107,7 @@ namespace Pruebaaas.Server.Controllers
                     Nombre = productoDto.Nombre,
                     UnidadesEnStock = productoDto.UnidadesEnStock,
                     ClaveProducto = productoDto.ClaveProducto,
+                    PrecioUnitario = productoDto.PrecioUnitario,
                     ClasificacionId = productoDto.ClasificacionId,
                     Proveedores = proveedores
                 };
@@ -139,6 +140,7 @@ namespace Pruebaaas.Server.Controllers
                 producto.Id = producto.Id;
                 producto.Nombre = producto.Nombre;
                 producto.UnidadesEnStock = producto.UnidadesEnStock;
+                producto.PrecioUnitario = producto.PrecioUnitario;
                 producto.ClaveProducto = producto.ClaveProducto;
                 producto.ClasificacionId = producto.ClasificacionId;
 

@@ -12,6 +12,7 @@
                 <th>Unidades en Stock</th>
                 <th>Clave de Producto</th>
                 <th>Clasificación</th>
+                <th>Precio unitario:</th>
                 <th>Proveedor</th>
             </tr>
         </thead>
@@ -25,6 +26,7 @@
                         <td>@producto.UnidadesEnStock</td>
                         <td>@producto.ClaveProducto</td>
                         <td>@producto.Clasificacion</td>
+                        <td>@producto.PrecioUnitario</td>
                         <td>
                             @foreach (var proveedor in producto.Proveedores)
                             {
@@ -55,6 +57,10 @@
         <div class="form-group">
             <label for="unidadesEnStock">Unidades en Stock:</label>
             <input type="number" class="form-control" id="unidadesEnStock" @bind="nuevoProducto.UnidadesEnStock" />
+        </div>
+        <div class="form-group">
+            <label for="precioUnitario">Precio Unitario:</label>
+            <input type="number" class="form-control" id="precioUnitario" @bind="nuevoProducto.PrecioUnitario" />
         </div>
         <div class="form-group">
             <label for="claveProducto">Clave de Producto:</label>
