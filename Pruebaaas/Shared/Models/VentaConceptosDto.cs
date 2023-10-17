@@ -2,12 +2,12 @@
 {
     public class VentaConceptosDto
     {
-        public decimal Cantidad { get; set; }
-        public string ClaveProducto { get; set; }
-        public string Descripcion { get; set; }
-        public decimal PrecioUnitario { get; set; }
-        public decimal Descuento { get; set; }
-        public decimal Importe { get; set; }
-        public int ProductoId { get; set; }
+        public decimal Cantidad { get; set; } = 0.00m;
+        public string ClaveProducto { get; set; } = string.Empty;
+        public string Descripcion { get; set; } = string.Empty;
+        public decimal PrecioUnitario { get; set; } = 0.00m;
+        public decimal Descuento { get; set; } = 0.00m;
+        public decimal Importe { get; set; } = 0.00m;
+        public int ProductoId { get; set; } = 0;
     }
 }

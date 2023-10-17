@@ -17,7 +17,7 @@ namespace Pruebaaas.Server.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("{folio:int}")]
         public async Task<ActionResult<VentaDto>> GetVenta(int folio)
         {
             var venta = await _context.Ventas
@@ -64,8 +64,62 @@ namespace Pruebaaas.Server.Controllers
             return ventaDto;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<VentaDto>>> GetVentas()
+        {
+            var ventas = await _context.Ventas
+                .Include(c => c.Conceptos)
+                .Include(c => c.Cliente)
+                .ToListAsync();
+
+            if (ventas == null || ventas.Count == 0) { return NotFound(); }
+
+            List<VentaDto> ventasDto = new List<VentaDto>();
+            foreach (Venta venta in ventas) 
+            {
+                ClienteDto clienteDto = new ClienteDto()
+                {
+                    Id = venta.ClienteId,
+                    RFC = venta.Cliente.RFC,
+                    Nombre = venta.Cliente.Nombre,
+                    Domicilio = venta.Cliente.Domicilio,
+                    Telefono = venta.Cliente.Telefono,
+                    TieneCredito = venta.Cliente.TieneCredito
+                };
+
+                List<VentaConceptosDto> conceptosDto = new List<VentaConceptosDto>();
+                foreach (VentaConceptos concepto in venta.Conceptos)
+                {
+                    conceptosDto.Add(new VentaConceptosDto()
+                    {
+                        Cantidad = concepto.Cantidad,
+                        ClaveProducto = concepto.ClaveProducto,
+                        Descripcion = concepto.Descripcion,
+                        PrecioUnitario = concepto.PrecioUnitario,
+                        Descuento = concepto.Descuento,
+                        Importe = concepto.Importe,
+                        ProductoId = concepto.ProductoId,
+                    });
+                }
+
+                VentaDto ventaDto = new VentaDto()
+                {
+                    Folio = venta.Folio,
+                    Fecha = venta.Fecha,
+                    Descuento = venta.Descuento,
+                    Total = venta.Total,
+                    Cliente = clienteDto,
+                    Conceptos = conceptosDto
+                };
+
+                ventasDto.Add(ventaDto);
+            }
+
+            return ventasDto;
+        }
+
         [HttpPost]
-        public async Task<ActionResult> Add(VentaAgregarDto ventaAgregarDto)
+        public async Task<ActionResult> Add([FromBody]VentaAgregarDto ventaAgregarDto)
         {
             try
             {
@@ -76,18 +130,25 @@ namespace Pruebaaas.Server.Controllers
 
                 foreach (VentaConceptosDto conceptoDto in ventaAgregarDto.Conceptos)
                 {
+                    Producto? producto = await _context.Productos
+                        .FirstOrDefaultAsync(x => x.Id == conceptoDto.ProductoId);
+
+                    if ( producto == null)
+                    {
+                        return NotFound("Producto no encontrado");
+                    }
+
                     VentaConceptos concepto = new VentaConceptos()
                     {
                         Cantidad = conceptoDto.Cantidad,
-                        ClaveProducto = conceptoDto.ClaveProducto,
-                        Descripcion = conceptoDto.Descripcion,
-                        PrecioUnitario = conceptoDto.PrecioUnitario,
+                        ClaveProducto = producto.ClaveProducto.ToString(),
+                        Descripcion = producto.Nombre,
+                        PrecioUnitario = producto.PrecioUnitario,
                         Descuento = conceptoDto.Descuento,
-                        Importe = conceptoDto.Importe,
+                        Importe = conceptoDto.Cantidad * producto.PrecioUnitario,
                         ProductoId = conceptoDto.ProductoId
                     };
 
-                    _context.Entry(concepto).State = EntityState.Unchanged;
                     conceptos.Add(concepto);
                 }
 
