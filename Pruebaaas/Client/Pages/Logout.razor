@@ -1,0 +1,17 @@
+﻿@page "/logout"
+@using Pruebaaas.Client.Auth
+@inject ILoginService loginService
+@inject NavigationManager navigationManager
+
+<p>Deslogueando...</p>
+
+
+@code {
+
+    protected async override Task OnInitializedAsync()
+    {
+        await loginService.Logout();
+        navigationManager.NavigateTo("");
+    }
+
+}

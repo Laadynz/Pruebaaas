@@ -1,0 +1,49 @@
+﻿@page "/login"
+@using CanoPOS.Client.Repositories;
+@using Pruebaaas.Client.Auth;
+@inject IRepository repository
+@inject HttpClient httpClient
+@inject ILoginService loginService
+@inject NavigationManager navigationManager
+
+<h3>Registro</h3>
+
+<EditForm Model="user" OnValidSubmit="LoguearUsuario">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="user.Email" />
+            <ValidationMessage For="@(() => user.Email)" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Correo:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="user.Password" />
+            <ValidationMessage For="@(() => user.Password)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</EditForm>
+
+@code {
+    private LoginDto user = new LoginDto();
+
+    private async Task LoguearUsuario()
+    {
+        var respuestaHTTP = await repository.Post<LoginDto, TokenJwtDto>("api/cuentas/login", user);
+
+        if (respuestaHTTP.Error)
+        {
+            var mensajeError = await respuestaHTTP.GetErrorMessageAsync();
+        }
+        else
+        {
+            await loginService.Login(respuestaHTTP.Response!.Token);
+            //navigationManager.NavigateTo("login");
+        }
+    }
+}
