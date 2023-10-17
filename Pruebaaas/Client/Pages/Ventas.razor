@@ -80,8 +80,8 @@
                 <thead class="titulos-tabla">
                     <tr>
                         <th>Id</th>
-                        <th>Nombre producto</th>
                         <th>Cantidad</th>
+                        <th>Nombre producto</th>
                         <th>Precio</th>
                         <th>Descuento</th>
                         <th>Importe</th>
@@ -95,8 +95,9 @@
                             <tr>
                                 <td>@conceptoVenta.ProductoId</td>
                                 <td>@conceptoVenta.Cantidad.ToString("N2")</td>
-                                <td>@conceptoVenta.Descuento.ToString("N2")</td>
+                                <td>@conceptoVenta.Descripcion</td>
                                 <td>@conceptoVenta.PrecioUnitario.ToString("N2")</td>
+                                <td>@conceptoVenta.Descuento.ToString("N2")</td>
                                 <td>@conceptoVenta.Importe.ToString("N2")</td>
                             </tr>
                         }
@@ -136,7 +137,7 @@
         await CargarProductos();
     }
 
-    private void AgregarProducto()
+    private async Task AgregarProducto()
     {
         try
         {
@@ -146,6 +147,16 @@
             }
 
             concepto.ProductoId = productoSeleccionadoId;
+            ProductoDto producto = await BuscarProducto(productoSeleccionadoId);
+            if (producto != null)
+            {
+
+                concepto.ClaveProducto = producto.ClaveProducto.ToString();
+                concepto.Descripcion = producto.Nombre;
+                concepto.PrecioUnitario = producto.PrecioUnitario;
+                concepto.Importe = (concepto.Cantidad * producto.PrecioUnitario) - concepto.Descuento;
+            }
+
             nuevaVenta.Conceptos.Add(concepto);
             concepto = new VentaConceptosDto();
         }
@@ -191,6 +202,19 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error al cargar ventas: {ex.Message}");
+        }
+    }
+
+    private async Task<ProductoDto> BuscarProducto(int id)
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<ProductoDto>($"api/producto/{id}");
+            return response;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error al cargar producto: {ex.Message}");
         }
     }
 
